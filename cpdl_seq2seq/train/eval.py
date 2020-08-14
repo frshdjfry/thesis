@@ -1,6 +1,5 @@
 import sys
-
-from predict import suggest_translations
+from cpdl_seq2seq.train.predict import suggest_translations
 
 
 # Word Accuracy in Top-1
