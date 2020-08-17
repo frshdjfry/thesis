@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import traceback
 import zipfile
 from lxml import etree
 
@@ -29,6 +30,35 @@ def unzip_files(input_dir, out_dir):
     print('%s file from %s article unzipped' % (counter, len(files)))
 
 
+class Note():
+    def __init__(self, note):
+        self.note = note
+
+    @property
+    def step(self):
+        return self.note.find('pitch').find('step').text
+
+    @property
+    def octave(self):
+        return self.note.find('pitch').find('octave').text
+
+    @property
+    def note_type(self):
+        return self.note.find('type').text
+
+    @property
+    def lyric_text(self):
+        return self.note.find('lyric').find('text').text
+
+    @property
+    def lyric_syllabic(self):
+        return self.note.find('lyric').find('syllabic').text
+
+    @property
+    def note_features(self):
+        return self.step + '_' + self.octave + '_' + self.note_type
+
+
 def extract_lyric_note(out_dir, file):
     with open(os.path.join(out_dir, file), 'r') as f:
         xml = f.read()
@@ -41,21 +71,24 @@ def extract_lyric_note(out_dir, file):
                 notes = []
                 syllables = []
                 for note in measure.findall('note'):
-                    if note.find('lyric'):
-                        if note.find('lyric').find('syllabic').text == 'single':
-                            word_res.append(note.find('lyric').find('text').text)
-                            note_res.append(note.find('pitch').find('step').text)
-                        elif note.find('lyric').find('syllabic').text == 'begin':
-                            notes.append(note.find('pitch').find('step').text)
-                            syllables.append(note.find('lyric').find('text').text)
+                    if note.find('lyric') and note.find('pitch'):
+                        enote = Note(note)
 
-                        elif note.find('lyric').find('syllabic').text == 'middle':
-                            notes.append(note.find('pitch').find('step').text)
-                            syllables.append(note.find('lyric').find('text').text)
+                        if enote.lyric_syllabic == 'single':
+                            note_res.append(enote.note_features)
+                            word_res.append(enote.lyric_text)
 
-                        elif note.find('lyric').find('syllabic').text == 'end':
-                            notes.append(note.find('pitch').find('step').text)
-                            syllables.append(note.find('lyric').find('text').text)
+                        elif enote.lyric_syllabic == 'begin':
+                            notes.append(enote.note_features)
+                            syllables.append(enote.lyric_text)
+
+                        elif enote.lyric_syllabic == 'middle':
+                            notes.append(enote.note_features)
+                            syllables.append(enote.lyric_text)
+
+                        elif enote.lyric_syllabic == 'end':
+                            notes.append(enote.note_features)
+                            syllables.append(enote.lyric_text)
                             note_res.append(' '.join(notes))
                             word_res.append(' '.join(syllables))
                             notes = []
@@ -94,6 +127,8 @@ def convert(out_dir):
     lyrics_res = []
     notes_res = []
     for f in files:
+        if not f.endswith('.xml'):
+            continue
         try:
             print('processing ', f)
             lyric, note = extract_lyric_note(out_dir, f)
@@ -101,9 +136,10 @@ def convert(out_dir):
             notes_res += note
 
             counter += 1
-        except Exception as e:
-            print(e)
+        except Exception:
+            print(traceback.format_exc())
             print('failed to extract lyrics', f)
+
     print(lyrics_res[:10])
     save_lyric_notes(lyrics_res, notes_res)
     print('%s file from %s article unzipped' % (counter, len(files)))
