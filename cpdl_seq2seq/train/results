@@ -1,0 +1,14 @@
+Epoch   0 Batch  300/694 - Train Accuracy: 0.7573, Validation Accuracy: 0.7538, Loss: 1.0070
+Epoch   0 Batch  600/694 - Train Accuracy: 0.6783, Validation Accuracy: 0.7755, Loss: 1.4437
+
+Epoch  51 Batch  300/694 - Train Accuracy: 0.7835, Validation Accuracy: 0.7785, Loss: 0.6126
+Epoch  51 Batch  600/694 - Train Accuracy: 0.6884, Validation Accuracy: 0.7785, Loss: 0.8087
+
+Epoch  99 Batch  300/694 - Train Accuracy: 0.7907, Validation Accuracy: 0.7762, Loss: 0.5874
+Epoch  99 Batch  600/694 - Train Accuracy: 0.6999, Validation Accuracy: 0.7780, Loss: 0.7529
+
+  Lyrics: ['oh', 'god', 'be', 'my', 'sa', 'viour']
+
+Prediction
+  Notes: g_3_eighth a_3_quarter a_3_eighth a_3_eighth a_3_half g_3_quarter <EOS>
+

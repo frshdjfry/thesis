@@ -1,6 +1,5 @@
 import sys
-from cpdl_seq2seq.train.predict import suggest_translations
-
+from predict import suggest_translations
 
 # Word Accuracy in Top-1
 # Fuzziness in Top-1 )Mean F-score(
@@ -9,7 +8,7 @@ from cpdl_seq2seq.train.predict import suggest_translations
 
 def load_eval_data(source_path):
     with open(source_path, 'r') as f:
-        return [i.strip().lower() for i in f]
+        return [i.strip() for i in f]
 
 #
 # def lcs(x, y, m, n):
@@ -20,6 +19,8 @@ def load_eval_data(source_path):
 #     else:
 #         return max(lcs(x, y, m, n - 1), lcs(x, y, m - 1, n))
 def lcs(s1, s2):
+    if len(s1) == 0 or len(s2) == 0:
+        return 0
     matrix = [["" for x in range(len(s2))] for x in range(len(s1))]
     for i in range(len(s1)):
         for j in range(len(s2)):
@@ -48,8 +49,8 @@ def fuzziness_in_top_1(predicteds, targets):
     for predicted, target in zip(predicteds, targets):
         clean_predicted = ''.join(predicted.split())
         clean_target = ''.join(target.split())
-        precision = float(lcs(clean_predicted, clean_target)) / len(clean_predicted)
-        recall = float(lcs(clean_predicted, clean_target)) / len(clean_target)
+        precision = float(lcs(clean_predicted, clean_target)) / len(clean_predicted) if len(clean_predicted) else 1
+        recall = float(lcs(clean_predicted, clean_target)) / len(clean_target) if len(clean_target) else 1
         if precision and recall:
             fscore = 2 * precision * recall / (precision + recall)
             fscores.append(fscore)

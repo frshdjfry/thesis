@@ -130,8 +130,8 @@ def preprocess_and_save_data(source_path, target_path):
     target_text = load_data(target_path)
 
     # to the lower case
-    source_text = source_text.lower()
-    target_text = target_text.lower()
+    source_text = source_text
+    target_text = target_text
 
     # create lookup tables for English and French data
     source_vocab_to_int, source_int_to_vocab = create_lookup_tables(source_text)
